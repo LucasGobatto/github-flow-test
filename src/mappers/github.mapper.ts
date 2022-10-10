@@ -11,6 +11,8 @@ export function mapRepositories(repositories: any[]) {
 export function mapPullRequests(pullRequests: any[]) {
   return pullRequests.map((pullRequest) => ({
     id: pullRequest.id,
+    updatedAt: pullRequest.updated_at,
+    createdAt: pullRequest.created_at,
     nodeId: pullRequest.node_id,
     title: pullRequest.title,
     url: pullRequest.url,
@@ -19,6 +21,7 @@ export function mapPullRequests(pullRequests: any[]) {
     owner: pullRequest.assignee?.login,
     ownerAvatar: pullRequest.assignee?.avatar_url,
     description: pullRequest.body,
+    isDraft: pullRequest.draft,
     requestedReviewers: pullRequest.requested_reviewers?.map((reviews: any) => ({
       id: reviews.id,
       nodeId: reviews.node_id,
@@ -30,12 +33,12 @@ export function mapPullRequests(pullRequests: any[]) {
       nodeId: team.node_id,
       name: team.name,
     })),
-    isDraft: pullRequest.draft,
   }));
 }
 
-export function mapRequestedReviewers(data: any) {
+export function mapRequestedReviewers(pullNumber: number, data: any) {
   return {
+    pullNumber,
     users: (data.users ?? []).map((user: any) => ({
       name: user?.login,
       id: user?.id,
@@ -50,8 +53,9 @@ export function mapRequestedReviewers(data: any) {
   };
 }
 
-export function mapReviewersInPullRequest(data: any[]) {
+export function mapReviewersInPullRequest(pullNumber: number, data: any[]) {
   return {
+    pullNumber,
     reviewers: data.map((review) => ({
       id: review.id,
       nodeId: review.node_id,

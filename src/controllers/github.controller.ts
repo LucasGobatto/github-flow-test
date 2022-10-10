@@ -1,9 +1,10 @@
 import { Service } from 'typedi';
-import { Body, Get, Req, UseAfter } from 'routing-controllers';
+import { Body, Get, JsonController, Req, UseAfter } from 'routing-controllers';
 import { GitHubBuilder } from '../builder/github.builder';
 import { HandleErrorMiddleware } from '../middlewares/handle-error.middleware';
 
 @Service()
+@JsonController()
 @UseAfter(HandleErrorMiddleware)
 export class GithubController {
   constructor(private readonly githubBuilder: GitHubBuilder) {}
@@ -31,7 +32,7 @@ export class GithubController {
     return { response };
   }
 
-  @Get('/reviwers')
+  @Get('/reviewers')
   async getReviwers(@Req() @Body() body: any) {
     const { repository, pullNumber } = body;
     const response = await this.githubBuilder.getAllReviewersInPullRequest(repository, pullNumber);
@@ -41,8 +42,8 @@ export class GithubController {
 
   @Get('/comments-review')
   async getReviewComments(@Req() @Body() body: any) {
-    const { repo, number } = body;
-    const response = await this.githubBuilder.getReviewCommentOnPullRequest(repo, number);
+    const { repository, pullNumber } = body;
+    const response = await this.githubBuilder.getReviewCommentOnPullRequest(repository, pullNumber);
 
     return { response };
   }

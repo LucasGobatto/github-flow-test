@@ -1,8 +1,10 @@
 import { Service } from 'typedi';
 import { createAppAuth } from '@octokit/auth-app';
 import { RequestInterface } from '@octokit/auth-app/dist-types/types';
+import { OctokitResponse } from '@octokit/types/dist-types';
 import { request } from '@octokit/request';
-import { GithubUrl } from './github.model';
+import { CommitsModel, GithubUrl } from '../model';
+import { BranchDetails } from './github.dto';
 import {
   mapPullRequests,
   mapRepositories,
@@ -59,7 +61,7 @@ export class GitHubBuilder {
       pullNumber,
     });
 
-    return requestedReviewers.data && mapRequestedReviewers(requestedReviewers.data);
+    return requestedReviewers.data && mapRequestedReviewers(pullNumber, requestedReviewers.data);
   }
 
   async getAllReviewersInPullRequest(repository: string, pullNumber: number) {
@@ -69,20 +71,38 @@ export class GitHubBuilder {
       pullNumber,
     });
 
-    return response.data && mapReviewersInPullRequest(response.data);
+    return response.data && mapReviewersInPullRequest(pullNumber, response.data);
   }
 
-  async getAllCommitsInRepository(repository: string, since: Date) {
+  async getAllCommitsInRepository(repository: string, since: Date, branch = 'develop'): Promise<CommitsModel[]> {
     // https://docs.github.com/en/rest/commits/commits#list-commits
     const response = await this.makeRequest(GithubUrl.ListCommitsInRepository, {
       repository,
+      sha: branch,
       since: since.toISOString(),
     });
 
     return response.data;
   }
 
-  private makeRequest(url: GithubUrl, data: any = {}) {
+  async getAllCommitsOnPullRequest(repository: string, pullNumber: number): Promise<any> {
+    const response = await this.makeRequest(GithubUrl.ListCommitsOnPullRequest, {
+      repository,
+      pullNumber,
+    });
+
+    return response.data;
+  }
+
+  async getAllBranchsInRepository(repository: string): Promise<string[]> {
+    const response = await this.makeRequest<BranchDetails[]>(GithubUrl.ListAllBranchs, {
+      repository,
+    });
+
+    return response?.data?.map((data) => data.name);
+  }
+
+  private makeRequest<T = any>(url: GithubUrl, data: any = {}): Promise<OctokitResponse<T, number>> {
     return this.request(`GET ${url}`, data);
   }
 

@@ -53,6 +53,19 @@ export interface RequestedReviewers {
   team: Team[];
 }
 
+export interface Reviewers {
+  id: string;
+  nodeId: string;
+  user: Author;
+  state: string;
+  comment: string;
+}
+
 export interface CodeReviewsStatsResponse {
-  reviewrs: RequestedReviewers[];
+  requestedReviewer: RequestedReviewers;
+  number: number;
+  title: string;
+  author: Author;
+  url: string;
+  reviewers: Reviewers[];
 }

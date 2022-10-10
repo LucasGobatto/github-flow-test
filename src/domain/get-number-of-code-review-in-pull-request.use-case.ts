@@ -7,7 +7,7 @@ import { ONE_DAY_AND_TRHEE_HOURS } from './constants';
 export class GetNumberOfCodeReviewInPullRequestUseCase {
   constructor(private readonly githubBuilder: GitHubBuilder) {}
 
-  async exec(input: Repository): ServerResponseModel<any> {
+  async exec(input: Repository): ServerResponseModel<CodeReviewsStatsResponse[]> {
     const { repository } = input;
 
     const pullRequests = await this.githubBuilder.getPullRequestsInRepository(repository);
@@ -15,7 +15,12 @@ export class GetNumberOfCodeReviewInPullRequestUseCase {
       (pr) => new Date(pr.updatedAt).getTime() <= Date.now() - ONE_DAY_AND_TRHEE_HOURS,
     );
 
-    const pullRequestsData = newestPullRequest.map((pr) => ({ number: pr.number, title: pr.title, author: pr.author }));
+    const pullRequestsData = newestPullRequest.map((pr) => ({
+      number: pr.number,
+      title: pr.title,
+      author: pr.author,
+      url: pr.url,
+    }));
     const promises = pullRequestsData.map(({ number }) =>
       this.githubBuilder.getAllReviewersInPullRequest(repository, number),
     );

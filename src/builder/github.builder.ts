@@ -44,6 +44,15 @@ export class GitHubBuilder {
     return mapPullRequests(data);
   }
 
+  async getPullRequestDetails(repository: string, pullNumber: number) {
+    const response = await this.makeRequest(GithubUrl.GetPullRequestDetails, {
+      repository,
+      pullNumber,
+    });
+
+    return response?.data && mapPullRequests([response.data])[0];
+  }
+
   async getReviewCommentOnPullRequest(repository: string, pullNumber: number) {
     // https://docs.github.com/en/rest/pulls/comments#get-a-review-comment-for-a-pull-request
     const comments = await this.makeRequest(GithubUrl.ListReviewCommentsOnPullRequest, {

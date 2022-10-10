@@ -29,7 +29,23 @@ interface Team {
   name: string;
 }
 
-interface PullRequestDetails {
+export interface PullRequestDetails {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+  nodeId: string;
+  title: string;
+  url: string;
+  number: number;
+  state: string;
+  description: string;
+  isDraft: boolean;
+  requestedReviewers: RequestedReviewers[];
+  requestedTeams: Team[];
+  author: Author;
+}
+
+interface PullRequestBasicInformation {
   title: string;
   number: number;
   url: string;
@@ -37,7 +53,7 @@ interface PullRequestDetails {
 
 export interface PullRequestAuthData {
   repository: string;
-  pullRequests: PullRequestDetails[];
+  pullRequests: PullRequestBasicInformation[];
   author: Author;
   count: number;
 }

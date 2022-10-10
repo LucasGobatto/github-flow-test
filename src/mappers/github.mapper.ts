@@ -1,4 +1,4 @@
-import { RequestedReviewers } from 'model';
+import { RequestedReviewers, PullRequestDetails } from '../model';
 
 export function mapRepositories(repositories: any[]) {
   return repositories.map((repo) => ({
@@ -10,7 +10,7 @@ export function mapRepositories(repositories: any[]) {
   }));
 }
 
-export function mapPullRequests(pullRequests: any[]) {
+export function mapPullRequests(pullRequests: any[]): PullRequestDetails[] {
   return pullRequests.map((pullRequest) => ({
     id: pullRequest.id,
     updatedAt: pullRequest.updated_at,

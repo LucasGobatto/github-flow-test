@@ -1,13 +1,13 @@
 import { Service } from 'typedi';
 import { GitHubBuilder } from '../builder/github.builder';
-import { Repository } from '../model';
+import { CodeReviewsStatsResponse, Repository, ServerResponseModel } from '../model';
 import { ONE_DAY_AND_TRHEE_HOURS } from './constants';
 
 @Service()
 export class GetNumberOfCodeReviewInPullRequestUseCase {
   constructor(private readonly githubBuilder: GitHubBuilder) {}
 
-  async exec(input: Repository) {
+  async exec(input: Repository): ServerResponseModel<any> {
     const { repository } = input;
 
     const pullRequests = await this.githubBuilder.getPullRequestsInRepository(repository);
@@ -15,7 +15,7 @@ export class GetNumberOfCodeReviewInPullRequestUseCase {
       (pr) => new Date(pr.updatedAt).getTime() <= Date.now() - ONE_DAY_AND_TRHEE_HOURS,
     );
 
-    const pullRequestsData = newestPullRequest.map((pr) => ({ number: pr.number, title: pr.title, author: pr.owner }));
+    const pullRequestsData = newestPullRequest.map((pr) => ({ number: pr.number, title: pr.title, author: pr.author }));
     const promises = pullRequestsData.map(({ number }) =>
       this.githubBuilder.getAllReviewersInPullRequest(repository, number),
     );

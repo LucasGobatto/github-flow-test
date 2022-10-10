@@ -16,42 +16,43 @@ export interface Repository {
   repository: string;
 }
 
-export interface CommitsModel {
-  sha: string;
-  node_id: string;
-  commit: {
-    author: {
-      name: string;
-      email: string;
-      date: string;
-    };
-    committer: {
-      name: string;
-      email: string;
-      date: string;
-    };
-    message: string;
-    tree: {
-      sha: string;
-      url: string;
-    };
-    url: string;
-    comment_count: number;
-    verification: {
-      verified: false;
-      reason: string;
-      signature: unknown;
-      payload: unknown;
-    };
-  };
+interface Author {
+  name: string;
+  id: string;
+  nodeId: string;
+  avatarUrl: string;
+}
+
+interface Team {
+  id: string;
+  nodeId: string;
+  name: string;
+}
+
+interface PullRequestDetails {
+  title: string;
+  number: number;
   url: string;
-  html_url: string;
-  comments_url: string;
-  author: unknown;
-  committer: unknown;
-  parents: {
-    sha: string;
-    url: string;
-    html_url: string;
-  }[];
+}
+
+export interface PullRequestAuthData {
+  repository: string;
+  pullRequests: PullRequestDetails[];
+  author: Author;
+  count: number;
+}
+
+export interface MergedPullRequestResponse {
+  count: number;
+  authorData: PullRequestAuthData[];
+}
+
+export interface RequestedReviewers {
+  pullNumber: number;
+  users: Author[];
+  team: Team[];
+}
+
+export interface CodeReviewsStatsResponse {
+  reviewrs: RequestedReviewers[];
 }

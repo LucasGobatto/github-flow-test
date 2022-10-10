@@ -1,3 +1,5 @@
+import { RequestedReviewers } from 'model';
+
 export function mapRepositories(repositories: any[]) {
   return repositories.map((repo) => ({
     id: repo.id,
@@ -15,11 +17,15 @@ export function mapPullRequests(pullRequests: any[]) {
     createdAt: pullRequest.created_at,
     nodeId: pullRequest.node_id,
     title: pullRequest.title,
-    url: pullRequest.url,
+    url: pullRequest.html_url,
     number: pullRequest.number,
     state: pullRequest.state,
-    owner: pullRequest.assignee?.login,
-    ownerAvatar: pullRequest.assignee?.avatar_url,
+    author: {
+      name: pullRequest.assignee?.login,
+      avatarUrl: pullRequest.assignee?.avatar_url,
+      nodeId: pullRequest.assignee?.node_id,
+      id: pullRequest.assignee?.id,
+    },
     description: pullRequest.body,
     isDraft: pullRequest.draft,
     requestedReviewers: pullRequest.requested_reviewers?.map((reviews: any) => ({
@@ -36,7 +42,7 @@ export function mapPullRequests(pullRequests: any[]) {
   }));
 }
 
-export function mapRequestedReviewers(pullNumber: number, data: any) {
+export function mapRequestedReviewers(pullNumber: number, data: any): RequestedReviewers {
   return {
     pullNumber,
     users: (data.users ?? []).map((user: any) => ({
@@ -63,6 +69,7 @@ export function mapReviewersInPullRequest(pullNumber: number, data: any[]) {
         id: review.user?.id,
         nodeId: review.user?.node_id,
         name: review.user?.login,
+        avatarUrl: review.user?.avatar_url,
       },
       state: review.state,
       comment: review.body,

@@ -3,8 +3,8 @@ import { createAppAuth } from '@octokit/auth-app';
 import { RequestInterface } from '@octokit/auth-app/dist-types/types';
 import { OctokitResponse } from '@octokit/types/dist-types';
 import { request } from '@octokit/request';
-import { CommitsModel, GithubUrl } from '../model';
-import { BranchDetails } from './github.dto';
+import { GithubUrl, RequestedReviewers } from '../model';
+import { BranchDetails, CommitsModel } from './github.dto';
 import {
   mapPullRequests,
   mapRepositories,
@@ -54,7 +54,7 @@ export class GitHubBuilder {
     return comments.data;
   }
 
-  async getAllRequestedReviewersInPullRequest(repository: string, pullNumber: number) {
+  async getAllRequestedReviewersInPullRequest(repository: string, pullNumber: number): Promise<RequestedReviewers> {
     // https://docs.github.com/en/rest/pulls/review-requests#get-all-requested-reviewers-for-a-pull-request
     const requestedReviewers = await this.makeRequest(GithubUrl.ListRequestedReviewsInPullRequest, {
       repository,
